@@ -1,11 +1,11 @@
-![Box2D Logo](https://box2d.org/images/logo.svg)
+![Box2D Logo](https://box2d.org/images/logo.svg)   ![LiquidFun](https://github.com/google/liquidfun/blob/master/liquidfun/Box2D/Documentation/Programmers-Guide/html/liquidfun-logo-square-small.png)
 
 # Build Status
 [![Build Status](https://github.com/erincatto/box2d/actions/workflows/build.yml/badge.svg)](https://github.com/erincatto/box2d/actions)
 
 # Box2D 
 
-Box2D is a 2D physics engine for games.
+Box2D is a 2D physics engine for games. With Liquidfun by google built in.
 
 ## Contributing
 
