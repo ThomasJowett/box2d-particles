@@ -62,6 +62,9 @@ public:
 	/// @see b2Shape::TestPoint
 	bool TestPoint(const b2Transform& transform, const b2Vec2& p) const override;
 
+	// @see b2Shape::ComputeDistance
+	void ComputeDistance(const b2Transform& xf, const b2Vec2& p, float* distance, b2Vec2* normal, int32 childIndex) const override;
+
 	/// Implement b2Shape.
 	/// @note because the polygon is solid, rays that start inside do not hit because the normal is
 	/// not defined.

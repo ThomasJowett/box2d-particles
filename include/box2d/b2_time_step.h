@@ -46,6 +46,7 @@ struct B2_API b2TimeStep
 	float dtRatio;	// dt * inv_dt0
 	int32 velocityIterations;
 	int32 positionIterations;
+	int32 particleIterations;
 	bool warmStarting;
 };
 

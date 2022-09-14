@@ -50,7 +50,32 @@
 
 /// The maximum number of vertices on a convex polygon. You cannot increase
 /// this too much because b2BlockAllocator has a maximum object size.
-#define b2_maxPolygonVertices	8
+#define b2_maxPolygonVertices 8
+
+#define b2_maxParticleIndex 0x7FFFFFFF
+
+/// The default distance between particles, multiplied by the particle diameter.
+#define b2_particleStride 0.75f
+
+/// The minimum particle weight that produces pressure.
+#define b2_minParticleWeight 1.0f
+
+/// The upper limit for particle pressure.
+#define b2_maxParticlePressure 0.25f
+
+/// The upper limit for force between particles.
+#define b2_maxParticleForce 0.5f
+
+/// The maximum distance between particles in a triad, multiplied by the
+/// particle diameter.
+#define b2_maxTriadDistance 2
+#define b2_maxTriadDistanceSquared (b2_maxTriadDistance * b2_maxTriadDistance)
+
+/// The initial size of particle data buffers.
+#define b2_minParticleSystemBufferCapacity 256
+
+/// The time into the future that collisions against barrier particles will be detected.
+#define b2_barrierCollisionTime 2.5f
 
 // User data
 
