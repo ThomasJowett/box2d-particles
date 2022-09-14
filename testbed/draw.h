@@ -76,6 +76,8 @@ public:
 
 	void DrawPoint(const b2Vec2& p, float size, const b2Color& color) override;
 
+	virtual void DrawParticles(const b2Vec2* centers, float radius, const b2ParticleColor* colors, int32 count) override;
+
 	void DrawString(int x, int y, const char* string, ...); 
 
 	void DrawString(const b2Vec2& p, const char* string, ...);
