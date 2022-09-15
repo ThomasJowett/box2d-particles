@@ -37,6 +37,7 @@ struct b2Manifold;
 class b2ParticleGroup;
 struct b2ParticleBodyContact;
 struct b2ParticleContact;
+class b2ParticleSystem;
 
 /// Joints and fixtures are destroyed when their associated
 /// body is destroyed. Implement this listener so that you
