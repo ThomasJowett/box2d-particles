@@ -24,6 +24,8 @@
 #include "settings.h"
 #include <stdio.h>
 
+extern ParticleParameter g_particleParameter;
+
 void DestructionListener::SayGoodbye(b2Joint* joint)
 {
 	if (test->m_mouseJoint == joint)
@@ -36,6 +38,24 @@ void DestructionListener::SayGoodbye(b2Joint* joint)
 	}
 }
 
+void DestructionListener::SayGoodbye(b2ParticleGroup* group)
+{
+	test->ParticleGroupDestroyed(group);
+}
+
+const b2ParticleColor Test::k_ParticleColors[] = {
+	b2ParticleColor(0xff, 0x00, 0x00, 0xff), // red
+	b2ParticleColor(0x00, 0xff, 0x00, 0xff), // green
+	b2ParticleColor(0x00, 0x00, 0xff, 0xff), // blue
+	b2ParticleColor(0xff, 0x8c, 0x00, 0xff), // orange
+	b2ParticleColor(0x00, 0xce, 0xd1, 0xff), // turquoise
+	b2ParticleColor(0xff, 0x00, 0xff, 0xff), // magenta
+	b2ParticleColor(0xff, 0xd7, 0x00, 0xff), // gold
+	b2ParticleColor(0x00, 0xff, 0xff, 0xff), // cyan
+};
+const uint32 Test::k_ParticleColorsCount =
+sizeof(Test::k_ParticleColors) / sizeof(Test::k_ParticleColors[0]);
+
 Test::Test()
 {
 	b2Vec2 gravity;
@@ -46,6 +66,7 @@ Test::Test()
 	m_textIncrement = 13;
 	m_mouseJoint = NULL;
 	m_pointCount = 0;
+	m_particleParameters = NULL;
 
 	m_destructionListener.test = this;
 	m_world->SetDestructionListener(&m_destructionListener);
@@ -61,6 +82,11 @@ Test::Test()
 
 	memset(&m_maxProfile, 0, sizeof(b2Profile));
 	memset(&m_totalProfile, 0, sizeof(b2Profile));
+
+	const b2ParticleSystemDef particleSystemDef;
+	m_particleSystem = m_world->CreateParticleSystem(&particleSystemDef);
+	m_particleSystem->SetGravityScale(0.4f);
+	m_particleSystem->SetDensity(1.2f);
 }
 
 Test::~Test()
@@ -68,6 +94,7 @@ Test::~Test()
 	// By deleting the world, we delete the bomb, mouse joint, etc.
 	delete m_world;
 	m_world = NULL;
+	RestoreParticleParameters();
 }
 
 void Test::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
@@ -139,6 +166,44 @@ public:
 
 	b2Vec2 m_point;
 	b2Fixture* m_fixture;
+};
+
+class QueryCallback2 : public b2QueryCallback
+{
+public:
+	QueryCallback2(b2ParticleSystem* particleSystem,
+		const b2Shape* shape, const b2Vec2& velocity)
+	{
+		m_particleSystem = particleSystem;
+		m_shape = shape;
+		m_velocity = velocity;
+	}
+
+	bool ReportFixture(b2Fixture* fixture)
+	{
+		B2_NOT_USED(fixture);
+		return false;
+	}
+
+	bool ReportParticle(const b2ParticleSystem* particleSystem, int32 index)
+	{
+		if (particleSystem != m_particleSystem)
+			return false;
+
+		b2Transform xf;
+		xf.SetIdentity();
+		b2Vec2 p = m_particleSystem->GetPositionBuffer()[index];
+		if (m_shape->TestPoint(xf, p))
+		{
+			b2Vec2& v = m_particleSystem->GetVelocityBuffer()[index];
+			v = m_velocity;
+		}
+		return true;
+	}
+
+	b2ParticleSystem* m_particleSystem;
+	const b2Shape* m_shape;
+	b2Vec2 m_velocity;
 };
 
 void Test::MouseDown(const b2Vec2& p)
@@ -296,6 +361,7 @@ void Test::Step(Settings& settings)
 
 	uint32 flags = 0;
 	flags += settings.m_drawShapes * b2Draw::e_shapeBit;
+	flags += settings.m_drawParticles * b2Draw::e_particleBit;
 	flags += settings.m_drawJoints * b2Draw::e_jointBit;
 	flags += settings.m_drawAABBs * b2Draw::e_aabbBit;
 	flags += settings.m_drawCOMs * b2Draw::e_centerOfMassBit;
@@ -305,10 +371,11 @@ void Test::Step(Settings& settings)
 	m_world->SetWarmStarting(settings.m_enableWarmStarting);
 	m_world->SetContinuousPhysics(settings.m_enableContinuous);
 	m_world->SetSubStepping(settings.m_enableSubStepping);
+	m_particleSystem->SetStrictContactCheck(settings.m_strictContacts);
 
 	m_pointCount = 0;
 
-	m_world->Step(timeStep, settings.m_velocityIterations, settings.m_positionIterations);
+	m_world->Step(timeStep, settings.m_velocityIterations, settings.m_positionIterations, settings.m_particleIterations);
 
 	m_world->DebugDraw();
     g_debugDraw.Flush();
@@ -324,6 +391,13 @@ void Test::Step(Settings& settings)
 		int32 contactCount = m_world->GetContactCount();
 		int32 jointCount = m_world->GetJointCount();
 		g_debugDraw.DrawString(5, m_textLine, "bodies/contacts/joints = %d/%d/%d", bodyCount, contactCount, jointCount);
+		m_textLine += m_textIncrement;
+
+		int32 particleCount = m_particleSystem->GetParticleCount();
+		int32 groupCount = m_particleSystem->GetParticleGroupCount();
+		int32 pairCount = m_particleSystem->GetPairCount();
+		int32 triadCount = m_particleSystem->GetTriadCount();
+		g_debugDraw.DrawString(5, m_textLine, "particles/groups/pairs/triads = %d%d%d%d", particleCount, groupCount, pairCount, triadCount);
 		m_textLine += m_textIncrement;
 
 		int32 proxyCount = m_world->GetProxyCount();
@@ -450,6 +524,89 @@ void Test::Step(Settings& settings)
 void Test::ShiftOrigin(const b2Vec2& newOrigin)
 {
 	m_world->ShiftOrigin(newOrigin);
+}
+
+void Test::ColorParticleGroup(b2ParticleGroup* const group, uint32 particlesPerColor)
+{
+	b2Assert(group);
+	b2ParticleColor* const colorBuffer = m_particleSystem->GetColorBuffer();
+	const int32 particleCount = group->GetParticleCount();
+	const int32 groupStart = group->GetBufferIndex();
+	const int32 groupEnd = particleCount + groupStart;
+	const int32 colorCount = (int32)k_ParticleColorsCount;
+	if (!particlesPerColor)
+	{
+		particlesPerColor = particleCount / colorCount;
+		if (!particlesPerColor)
+		{
+			particlesPerColor = 1;
+		}
+	}
+	for (int32 i = groupStart; i < groupEnd; i++)
+	{
+		colorBuffer[i] = k_ParticleColors[i / particlesPerColor];
+	}
+}
+
+void Test::InitializeParticleParameters(const uint32 filterMask)
+{
+	const uint32 defaultNumValues =
+		ParticleParameter::k_defaultDefinition[0].numValues;
+	const ParticleParameter::Value* const defaultValues =
+		ParticleParameter::k_defaultDefinition[0].values;
+	m_particleParameters = new ParticleParameter::Value[defaultNumValues];
+
+	// Disable selection of wall and barrier particle types.
+	uint32 numValues = 0;
+	for (uint32 i = 0; i < defaultNumValues; i++)
+	{
+		if (defaultValues[i].value & filterMask)
+		{
+			continue;
+		}
+		memcpy(&m_particleParameters[numValues], &defaultValues[i],
+			sizeof(defaultValues[0]));
+		numValues++;
+	}
+	m_particleParameterDef.values = m_particleParameters;
+	m_particleParameterDef.numValues = numValues;
+	SetParticleParameters(&m_particleParameterDef, 1);
+}
+
+void Test::RestoreParticleParameters()
+{
+	if (m_particleParameters)
+	{
+		SetParticleParameters(
+			ParticleParameter::k_defaultDefinition, 1);
+		delete[] m_particleParameters;
+		m_particleParameters = NULL;
+	}
+}
+
+void Test::SetRestartOnParticleParameterChange(bool enable)
+{
+	g_particleParameter.SetRestartOnChange(enable);
+}
+
+uint32 Test::SetParticleParameterValue(uint32 value)
+{
+	const int32 index = g_particleParameter.FindIndexByValue(value);
+	// If the particle type isn't found, so fallback to the first entry in the
+	// parameter.
+	g_particleParameter.Set(index >= 0 ? index : 0);
+	return g_particleParameter.GetValue();
+}
+
+uint32 Test::GetParticleParameterValue()
+{
+	return g_particleParameter.GetValue();
+}
+
+void Test::SetParticleParameters(const ParticleParameter::Definition* const particleParameterDef, const uint32 particleParameterDefCount)
+{
+	g_particleParameter.SetDefinition(particleParameterDef,
+		particleParameterDefCount);
 }
 
 TestEntry g_testEntries[MAX_TESTS] = { {nullptr} };

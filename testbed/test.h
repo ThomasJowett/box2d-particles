@@ -25,6 +25,7 @@
 
 #include "box2d/box2d.h"
 #include "draw.h"
+#include "particle_parameter.h"
 
 #include <stdlib.h>
 
@@ -59,6 +60,7 @@ class DestructionListener : public b2DestructionListener
 public:
 	void SayGoodbye(b2Fixture* fixture) override { B2_NOT_USED(fixture); }
 	void SayGoodbye(b2Joint* joint) override;
+	void SayGoodbye(b2ParticleGroup* group) override;
 
 	Test* test;
 };
@@ -102,6 +104,8 @@ public:
 	// Let derived tests know that a joint was destroyed.
 	virtual void JointDestroyed(b2Joint* joint) { B2_NOT_USED(joint); }
 
+	virtual void ParticleGroupDestroyed(b2ParticleGroup* group) { B2_NOT_USED(group); }
+
 	// Callbacks for derived classes.
 	virtual void BeginContact(b2Contact* contact)  override { B2_NOT_USED(contact); }
 	virtual void EndContact(b2Contact* contact)  override { B2_NOT_USED(contact); }
@@ -113,6 +117,39 @@ public:
 	}
 
 	void ShiftOrigin(const b2Vec2& newOrigin);
+
+	// Apply a preset range of colors to a particle group.
+	// A different color out of k_ParticleColors is applied to each
+	// particlesPerColor particles in the specified group.
+	// If particlesPerColor is 0, the particles in the group are divided into
+	// k_ParticleColorsCount equal sets of colored particles.
+	void ColorParticleGroup(b2ParticleGroup* const group,
+		uint32 particlesPerColor);
+
+	// Remove particle parameters matching "filterMask" from the set of
+	// particle parameters available for this test.
+	void InitializeParticleParameters(const uint32 filterMask);
+
+	// Restore default particle parameters.
+	void RestoreParticleParameters();
+
+	// Set whether to restart the test on particle parameter changes.
+	// This parameter is re-enabled when the test changes.
+	static void SetRestartOnParticleParameterChange(bool enable);
+
+	// Set the currently selected particle parameter value.  This value must
+	// match one of the values in Test::k_particleTypes or one of the values
+	// referenced by particleParameterDef passed to SetParticleParameters().
+	static uint32 SetParticleParameterValue(uint32 value);
+
+	// Get the currently selected particle parameter value and enable particle
+	// parameter selection arrows on Android.
+	uint32 GetParticleParameterValue();
+
+	// Override the default particle parameters for the test.
+	void SetParticleParameters(
+		const ParticleParameter::Definition* const particleParameterDef,
+		const uint32 particleParameterDefCount);
 
 protected:
 	friend class DestructionListener;
@@ -126,6 +163,7 @@ protected:
 	DestructionListener m_destructionListener;
 	int32 m_textLine;
 	b2World* m_world;
+	b2ParticleSystem* m_particleSystem;
 	b2Body* m_bomb;
 	b2MouseJoint* m_mouseJoint;
 	b2Vec2 m_bombSpawnPoint;
@@ -135,6 +173,13 @@ protected:
 	int32 m_textIncrement;
 	b2Profile m_maxProfile;
 	b2Profile m_totalProfile;
+
+	// Valid particle parameters for this test.
+	ParticleParameter::Value* m_particleParameters;
+	ParticleParameter::Definition m_particleParameterDef;
+
+	static const b2ParticleColor k_ParticleColors[];
+	static const uint32 k_ParticleColorsCount;
 };
 
 typedef Test* TestCreateFcn();

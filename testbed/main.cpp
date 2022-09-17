@@ -40,6 +40,7 @@
 #endif
 
 GLFWwindow* g_mainWindow = nullptr;
+ParticleParameter g_particleParameter;
 static int32 s_testSelection = 0;
 static Test* s_test = nullptr;
 static Settings s_settings;
@@ -364,6 +365,7 @@ static void UpdateUI()
 			{
 				ImGui::SliderInt("Vel Iters", &s_settings.m_velocityIterations, 0, 50);
 				ImGui::SliderInt("Pos Iters", &s_settings.m_positionIterations, 0, 50);
+				ImGui::SliderInt("Particle Iters", &s_settings.m_particleIterations, 0, 50);
 				ImGui::SliderFloat("Hertz", &s_settings.m_hertz, 5.0f, 120.0f, "%.0f hz");
 				
 				ImGui::Separator();
@@ -376,6 +378,7 @@ static void UpdateUI()
 				ImGui::Separator();
 
 				ImGui::Checkbox("Shapes", &s_settings.m_drawShapes);
+				ImGui::Checkbox("Particles", &s_settings.m_drawParticles);
 				ImGui::Checkbox("Joints", &s_settings.m_drawJoints);
 				ImGui::Checkbox("AABBs", &s_settings.m_drawAABBs);
 				ImGui::Checkbox("Contact Points", &s_settings.m_drawContactPoints);

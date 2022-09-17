@@ -847,6 +847,7 @@ void DebugDraw::DrawParticles(const b2Vec2* centers, float radius, const b2Parti
 {
 	for (size_t i = 0; i < count; i++)
 	{
-		m_points->Vertex(centers[i], b2Color(colors[i].r, colors[i].g, colors[i].b), 0.001f);
+		m_points->Vertex(centers[i], colors ? b2Color(colors[i].r, colors[i].g, colors[i].b)
+			: b2Color(1.0f, 1.0f, 1.0f, 1.0f), 0.001f);
 	}
 }

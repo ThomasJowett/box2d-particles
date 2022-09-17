@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include "box2d/b2_particle.h"
+
 struct Settings
 {
 	Settings()
@@ -37,7 +39,9 @@ struct Settings
 		m_hertz = 60.0f;
 		m_velocityIterations = 8;
 		m_positionIterations = 3;
+		m_particleIterations = b2CalculateParticleIterations(10, 0.04f, 1 / m_hertz);
 		m_drawShapes = true;
+		m_drawParticles = true;
 		m_drawJoints = true;
 		m_drawAABBs = false;
 		m_drawContactPoints = false;
@@ -53,6 +57,7 @@ struct Settings
 		m_enableSleep = true;
 		m_pause = false;
 		m_singleStep = false;
+		m_strictContacts = false;
 	}
 
 	void Save();
@@ -64,7 +69,9 @@ struct Settings
 	float m_hertz;
 	int m_velocityIterations;
 	int m_positionIterations;
+	int m_particleIterations;
 	bool m_drawShapes;
+	bool m_drawParticles;
 	bool m_drawJoints;
 	bool m_drawAABBs;
 	bool m_drawContactPoints;
@@ -80,4 +87,5 @@ struct Settings
 	bool m_enableSleep;
 	bool m_pause;
 	bool m_singleStep;
+	bool m_strictContacts;
 };
