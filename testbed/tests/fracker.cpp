@@ -24,6 +24,7 @@
 #include <set>
 #include <vector>
 #include <stdio.h>
+#include <string>
 
 // Tracks instances of RadialEmitter and destroys them after a specified
 // period of time.
@@ -768,10 +769,10 @@ public:
 	// Render the score and the instructions / keys.
 	void DrawScore()
 	{
-		char score[512];
-		sprintf(score, "Score: %d, Remaining Oil %d",
-		        m_listener.GetScore(), m_listener.GetOil());
-		const char *lines[] = { score,  "Move: a,s,d,w   Fracking Fluid: e" };
+		std::string score = "Score: " + std::to_string(m_listener.GetScore()) +
+			", Remaining Oil " + std::to_string(m_listener.GetOil());
+
+		const char *lines[] = { score.c_str(),  "Move: a,s,d,w   Fracking Fluid: e"};
 		for (uint32 i = 0; i < sizeof(lines) / sizeof(lines[0]); ++i)
 		{
 			g_debugDraw.DrawString(5, m_textLine, lines[i]);
