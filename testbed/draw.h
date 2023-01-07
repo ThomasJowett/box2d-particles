@@ -24,7 +24,7 @@
 #define DRAW_H
 
 #define GLFW_INCLUDE_NONE
-#include "glad/gl.h"
+#include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
 #include "box2d/box2d.h"

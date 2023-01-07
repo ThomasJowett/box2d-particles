@@ -529,8 +529,8 @@ int main(int, char**)
 	glfwMakeContextCurrent(g_mainWindow);
 
 	// Load OpenGL functions using glad
-	int version = gladLoadGL(glfwGetProcAddress);
-	printf("GL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+	int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	printf("GL %d.%d\n", GLVersion.major, GLVersion.major);
 	printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 	glfwSetScrollCallback(g_mainWindow, ScrollCallback);
