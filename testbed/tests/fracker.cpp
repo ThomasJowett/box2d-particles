@@ -556,7 +556,7 @@ public:
 	}
 
 	// Try to deploy the fracking fluid or move the player.
-	virtual void MouseUp(const b2Vec2& p)
+	virtual void MouseUp(const b2Vec2& p) override
 	{
 		if (!m_allowInput)
 		{
@@ -589,7 +589,7 @@ public:
 	}
 
 	// Start preparing the fracking fluid.
-	virtual void MouseDown(const b2Vec2& p)
+	virtual void MouseDown(const b2Vec2& p) override
 	{
 		B2_NOT_USED(p);
 		m_frackingFluidChargeTime = 0.0f;
@@ -662,7 +662,7 @@ public:
 		m_particleSystem->DestroyParticlesInShape(shape, killLocation);
 	}
 
-	void Step(Settings& settings)
+	void Step(Settings& settings) override
 	{
 		Test::Step(settings);
 		const float dt =  1.0f / settings.m_hertz;

@@ -258,7 +258,7 @@ public:
 		}
 	}
 
-	void Step(Settings& settings)
+	void Step(Settings& settings) override
 	{
 		const uint32 parameterValue = GetParticleParameterValue();
 		m_drawing = (parameterValue & e_parameterMove) != e_parameterMove;

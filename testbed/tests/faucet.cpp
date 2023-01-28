@@ -140,7 +140,7 @@ public:
 	}
 
 	// Run a simulation step.
-	void Step(Settings& settings)
+	void Step(Settings& settings) override
 	{
 		const float dt = 1.0f / settings.m_hertz;
 		Test::Step(settings);
