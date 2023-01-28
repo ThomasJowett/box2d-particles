@@ -22,9 +22,9 @@
 class DrawingParticles : public Test
 {
 private:
-	// Set bit 31 to distiguish these values from particle flags.
+	// Set bit 30 to distiguish these values from particle flags.
 	enum Parameters {
-		e_parameterBegin = (1UL << 31), // Start of this parameter namespace.
+		e_parameterBegin = (1UL << 30), // Start of this parameter namespace.
 		e_parameterMove = e_parameterBegin | (1UL << 0),
 		e_parameterRigid = e_parameterBegin | (1UL << 1),
 		e_parameterRigidBarrier = e_parameterBegin | (1UL << 2),
