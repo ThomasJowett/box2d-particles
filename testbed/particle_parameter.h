@@ -17,7 +17,7 @@
 */
 #ifndef PARTICLE_PARAMETER_H
 #define PARTICLE_PARAMETER_H
-#include <box2d/box2d.h>
+#include "box2d/box2d.h"
 
 // Manages a list of parameter values that can be iterated through using
 // simple UI elements.
