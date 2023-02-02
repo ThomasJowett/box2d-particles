@@ -408,9 +408,9 @@ b2ParticleSystem::b2ParticleSystem(const b2ParticleSystemDef* def,
 	SetDensity(def->density);
 	SetGravityScale(def->gravityScale);
 	SetRadius(def->radius);
+	m_count = 0;
 	SetMaxParticleCount(def->maxCount);
 
-	m_count = 0;
 	m_internalAllocatedCapacity = 0;
 	m_forceBuffer = NULL;
 	m_weightBuffer = NULL;
