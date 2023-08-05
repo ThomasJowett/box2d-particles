@@ -6,6 +6,7 @@ set (TESTBED_SOURCE_FILES
 	imgui_impl_opengl3.cpp
 	imgui_impl_opengl3.h
 	main.cpp
+	particle_parameter.cpp
 	settings.h
 	settings.cpp
 	test.cpp
@@ -34,6 +35,7 @@ set (TESTBED_SOURCE_FILES
 	tests/distance_joint.cpp
 	tests/distance_test.cpp
 	tests/dominos.cpp
+	tests/drawing_particles.cpp
 	tests/dump_loader.cpp
 	tests/dynamic_tree.cpp
 	tests/edge_shapes.cpp
@@ -42,30 +44,44 @@ set (TESTBED_SOURCE_FILES
 	tests/gear_joint.cpp
 	tests/heavy1.cpp
 	tests/heavy2.cpp
+	tests/impulse.cpp
+	tests/liquid_timer.cpp
+	tests/maxwell.cpp
 	tests/mobile_balanced.cpp
 	tests/mobile_unbalanced.cpp
 	tests/motor_joint.cpp
+	tests/multiple_particle_systems.cpp
+	tests/particle_collision_filter.cpp
+	tests/particles.cpp
+	tests/particles_surface_tension.cpp
 	tests/pinball.cpp
 	tests/platformer.cpp
+	tests/pointy.cpp
 	tests/polygon_collision.cpp
 	tests/polygon_shapes.cpp
 	tests/prismatic_joint.cpp
 	tests/pulley_joint.cpp
 	tests/pyramid.cpp
+	tests/ramp.cpp
 	tests/ray_cast.cpp
 	tests/restitution.cpp
 	tests/revolute_joint.cpp
 	tests/rope.cpp
+	tests/sandbox.cpp
 	tests/sensor.cpp
 	tests/shape_cast.cpp
 	tests/shape_editing.cpp
 	tests/skier.cpp
 	tests/slider_crank_1.cpp
 	tests/slider_crank_2.cpp
+	tests/soup.cpp
+	tests/soup_stirrer.cpp
+	tests/sparky.cpp
 	tests/theo_jansen.cpp
 	tests/tiles.cpp
 	tests/time_of_impact.cpp
 	tests/tumbler.cpp
+	tests/wave_machine.cpp
 	tests/web.cpp
 	tests/wheel_joint.cpp
 	tests/wrecking_ball.cpp

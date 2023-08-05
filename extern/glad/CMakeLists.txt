@@ -1,8 +1,8 @@
 set(GLAD_SOURCE_FILES
-  src/gl.c)
+  src/glad.c)
 
 set(GLAD_HEADER_FILES
-  include/glad/gl.h
+  include/glad/glad.h
   include/KHR/khrplatform.h)
 
 add_library(glad STATIC ${GLAD_SOURCE_FILES} ${GLAD_HEADER_FILES})
